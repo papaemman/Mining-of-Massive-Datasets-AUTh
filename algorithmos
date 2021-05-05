@@ -1,0 +1,126 @@
+
+Estw 
+
+(1, 2, 0.80)
+(5, 1, 0.56)
+(1, 40, 0.44)
+(2, 5, 0.40)
+(6, 2, 0.79) 
+(2, 40, 0.30)
+
+
+
+1) map(lambda x: (x.smaller,(x.bigger,x.probability) )
+
+To apotelesma meta to 1) 8a einai to parakatw RDD:
+
+(1, (2, 0.80))
+(1, (5, 0.56))
+(1, (40, 0.44))
+(2, (5, 0.40))
+(2, (6, 0.79))
+(2, (40, 0.30))
+
+
+2) groupBykey()
+
+To apotelesma meta to 2) 8a einai to parakatw RDD:
+
+(1, [(2, 0.80),(5, 0.56),(40, 0.44)])
+(2, [(5, 0.40),(6, 0.79),(40, 0.30)])
+
+
+3) flatMap(function),  
+			
+def function(x): 
+	lista = list(x_value).sort(key = lambda y : y[o])
+	listaToReturn = list()
+	for index,i in enumerate(lista):
+		y = i_key
+		listaToReturn.append( ((x_key,y), (i_value,-1)) ) # Ta edges pou uparxoun ontws. Example, ( (1,2),(0.80,-1) ). To "-1" dhlwnnei oti uparxei ontws auto to edge.
+		for o in lista[index:]: #oles ta edges pou 8elw na 4a3w an uparxoun wste na kanw tripletes
+			edge = ( (y,o_key), (2,x_key) )   #H timh "2" einai dummy kai thn bazw wste na exoun thn idia morfh me thn grammh 40). Example ( (2,5), (2.00, 1))
+			listaToReturn.append(edge)
+	return listaToReturn
+	
+To apotelesma meta to 3) 8a einai to parakatw RDD:
+
+( (1,2), (0.80,-1))
+( (1,5), (0.56,-1))
+( (1,40), (0.44,-1))
+( (2,5), (0.40,-1))  	
+( (2,6), (0.79,-1))  	
+( (2,40), (0.33, -1))
+( (2,5), (2.00, 1))
+( (2,40), (2.00, 1))
+( (5,40), (2.00, 1))
+( (5,6), (2.00, 2))
+( (5,40), (2.00, 2))
+( (6,40), (2.00, 2))	
+
+	
+	
+4) groupByKey()
+
+To apotelesma meta to 4) 8a einai to parakatw RDD:
+
+((1,2), [(0.80,-1)])
+((1,5), [(0.56,-1)])
+((1,40), [(0.30,-1)])
+((2,5), [(2.00,1), (0.40,-1)])  #Den 3erw an mpainoun me authn thn seira sthn lista
+((2,40), [(2.00,1), (0.30,-1)])  #Den 3erw an mpainoun me authn thn seira sthn lista
+((2,6), [(0.79,-1)])
+((5,40), [(2.00,1), (2.00,2)])  #Den 3erw an mpainoun me authn thn seira sthn lista
+((6,40), [(2.00,2)])  #Den 3erw an mpainoun me authn thn seira sthn lista
+((5,6), [(2.00,2)])
+
+
+
+5) flatMap(func)
+		
+def function(x): 
+	lista = list(x_value) #endexomenos den xreiazetai epeidi einai hdh lista
+	
+	lista = list.sort(key=lambda x: x[1])
+	probabilityOfEdge = lista[0]_value
+	edge = x_key
+	 
+	if lista[0]_value == -1:     # Uparxei to edge ston grafo
+		listToReturn = list()
+		for index,i in enumerate(lista):
+			if index == 0:
+				a = tuple(x_key_key,(edge,probabilityOfEdge))
+				listToReturn.append(a)
+			else:
+				a = tuple(i_value,(edge,probabilityOfEdge))
+				listToReturn.append(a)
+		return listToReturn
+	else:  # Den uparxei to edge ston grafo
+		return []
+				 
+	
+	
+To apotelesma meta to 5) 8a einai to parakatw RDD:				
+				 
+(1,((1,2),0.80))
+(1,((1,5),0.56))
+(1,((1,40),0.30))
+(2,((2,5),0.40))
+(1,((2,5),0.40))
+(2,((2,40),0.30))
+(1,((2,40),0.30))
+(2,((2,6),0.79))
+	
+ 
+6) groupByKey()
+
+To apotelesma meta to 6) 8a einai to parakatw RDD:		
+
+(1, [ ((1,2),0.80), ((1,5),0.56), ((1,40),0.30), ((2,5),0.40), ((2,40),0.30) ])		
+(2, [ ((2,5),0.40), ((2,40),0.30), ((2,6),0.79) ])
+
+7) flatMap(func).sort().take(k)
+
+func = mia function pou parnei tis listesw apo to rdd sto 6) kai briskei tis tripletes mazi me ths pi8anothtes tous kai tis bash se mia lista wste na ginoun flatmap.		
+ 
+				
