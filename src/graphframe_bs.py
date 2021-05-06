@@ -20,7 +20,7 @@ def main(TopK:str):
 
        
     #load dataset(edge list) to dataframe 
-    edgesDF = sc.read.option("header",True).option("inferSchema",True).csv("./ex.csv")
+    edgesDF = sc.read.option("header",True).option("inferSchema",True).csv("input/ex.csv")
 
     # returns the smallest string between 2 strings
     @udf("string")

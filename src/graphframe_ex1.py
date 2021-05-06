@@ -21,7 +21,7 @@ def main(TopK:str):
 
        
     #load dataset(edge list) to dataframe 
-    edgesDF = sc.read.option("header",True).option("inferSchema",True).csv("./ex.csv")
+    edgesDF = sc.read.option("header",True).option("inferSchema",True).csv("input/ex.csv")
 
     # returns the smallest string between 2 strings
     @udf("string")
@@ -39,9 +39,8 @@ def main(TopK:str):
 
     
     # re-order the source and destination of the edges. Source always the smallest id
-    #edgesDF = edgesDF.select(edgeSrc(edgesDF.src,edgesDF.dst).alias("src"),edgeDst(edgesDF.src,edgesDF.dst).alias("dst"),"probability") 
-    #edgesDF = edgesDF.select(edgeSrc(edgesDF.src,edgesDF.dst).alias("src"),edgeDst(edgesDF.src,edgesDF.dst).alias("dst"),"probability").cache()
-    edgesDF = edgesDF.select(edgeSrc(edgesDF.src,edgesDF.dst).alias("src"),edgeDst(edgesDF.src,edgesDF.dst).alias("dst"),"probability").persist( StorageLevel.MEMORY_AND_DISK)
+    edgesDF = edgesDF \
+                    .select(edgeSrc(edgesDF.src,edgesDF.dst).alias("src"),edgeDst(edgesDF.src,edgesDF.dst).alias("dst"),"probability") 
 
     # create dataframe that consist the nodes
     nodesDF= edgesDF \
@@ -50,6 +49,13 @@ def main(TopK:str):
                 .distinct() \
                 .withColumnRenamed("src", "id") 
 
+    #edgesDF.printSchema()
+
+    # Create the Graph
+    #g = GraphFrame(nodesDF,edgesDF)
+    #g = GraphFrame(nodesDF,edgesDF).cache()
+    g = GraphFrame(nodesDF,edgesDF).persist(StorageLevel.MEMORY_AND_DISK)
+
     #spaces = [0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.1,0]
     spaces = [0.7,0.4,0]
     #spaces = [0.5,0]
@@ -57,8 +63,9 @@ def main(TopK:str):
     # Finds all the triangles, "subgraph" = Dataframe
     for index,space in enumerate(spaces):
         
-        g = GraphFrame(nodesDF,edgesDF.filter(edgesDF.probability > space))
-        subgraph = g.find("(a)-[e]->(b); (b)-[e2]->(c); (a)-[e3]->(c)")
+        newGraph = GraphFrame(nodesDF, g.edges.filter("probability > " + str(space)))
+        #newGraph = g.filterEdges("probability > " + str(space))
+        subgraph = newGraph.find("(a)-[e]->(b); (b)-[e2]->(c); (a)-[e3]->(c)")
 
         # Concatenate 3 strings
         @udf("string")
@@ -90,7 +97,7 @@ def main(TopK:str):
                             .withColumn("Triangle_Prob", reduce(triangleProbCalc, ["e", "e2", "e3"], lit(1))) \
                             .sort("Triangle_Prob",ascending=False) \
                             .select("Triangle", "Triangle_Prob") \
-                            .head(int(TopK))
+                            .head(int(TopK)) 
 
 
         #.withColumn("Triangle",triangleName(subgraph.a["id"],subgraph.b["id"],subgraph.c["id"])) \
