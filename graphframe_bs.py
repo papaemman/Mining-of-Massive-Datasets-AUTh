@@ -60,10 +60,8 @@ def main(TopK:str):
     # Concatenate 3 strings
     @udf("string")
     def triangleName(node1:str, node2:str, node3:str)-> str:
-        triangle = ""
-        for node in sorted([node1,node2,node3]):
-            triangle += node 
-        return triangle
+        nodes = [node1,node2,node3].sort()
+        return node1 + "," + node2 + "," + node3
 
     # Na to kanw udf
     def triangleProbCalc(cnt, edge):
@@ -85,9 +83,11 @@ def main(TopK:str):
                             .dropDuplicates(["Triangle"]) \
                             .withColumn("Triangle_Prob", reduce(triangleProbCalc, ["e", "e2", "e3"], lit(1))) \
                             .sort("Triangle_Prob",ascending=False) \
-                            .take(int(TopK))
+                            .select("Triangle","Triangle_Prob") \
+                            .head(int(TopK)) 
 
-    print(TopKTriangles)
+    for triangle in TopKTriangles:
+        print(triangle)
 
     sc.stop()
 

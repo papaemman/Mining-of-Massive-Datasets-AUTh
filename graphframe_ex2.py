@@ -23,7 +23,6 @@ def main(TopK:str):
     #load dataset(edge list) to dataframe 
     edgesDF = sc.read.option("header",True).option("inferSchema",True).csv("./ex.csv")
 
-    edgesDF.printSchema()
     # returns the smallest string between 2 strings
     @udf("string")
     def edgeSrc(src:str,dst:str)-> str:
@@ -64,10 +63,8 @@ def main(TopK:str):
         # Concatenate 3 strings
         @udf("string")
         def triangleName(node1:str, node2:str, node3:str)-> str:
-            triangle = ""
-            for node in sorted([str(node1),str(node2),str(node3)]):
-                triangle += node 
-            return triangle
+            nodes = [node1,node2,node3].sort()
+            return node1 + "," + node2 + "," + node3
 
 
         """
@@ -93,19 +90,21 @@ def main(TopK:str):
                             .withColumn("Triangle_Prob", reduce(triangleProbCalc, ["e", "e2", "e3"], lit(1))) \
                             .sort("Triangle_Prob",ascending=False) \
                             .select("Triangle", "Triangle_Prob") \
-                            .take(int(TopK))
+                            .head(int(TopK))
 
 
         #.withColumn("Triangle",triangleName(subgraph.a["id"],subgraph.b["id"],subgraph.c["id"])) \
 
 
         if len(TopKTriangles) == int(TopK):
-            print(TopKTriangles)
-            #print("Edw stamathse : " + str(index))
+            for triangle in TopKTriangles:
+                print(triangle)
             break
     
     if len(TopKTriangles) < int(TopK): 
-        print(TopKTriangles)
+        for triangle in TopKTriangles:
+            print(triangle)
+
     sc.stop()
 
 if __name__ == "__main__":
