@@ -1,5 +1,6 @@
 from pyspark import SparkContext
 from pyspark.sql import SparkSession, Row
+from pyspark.sql.types import StructType, StructField, StringType, FloatType
 from pyspark.sql.functions import udf,lit,col,when
 from pyspark import StorageLevel
 from graphframes.examples import Graphs
@@ -39,9 +40,8 @@ def main(TopK:str):
 
     
     # re-order the source and destination of the edges. Source always the smallest id
-    #edgesDF = edgesDF.select(edgeSrc(edgesDF.src,edgesDF.dst).alias("src"),edgeDst(edgesDF.src,edgesDF.dst).alias("dst"),"probability") 
-    edgesDF = edgesDF.select(edgeSrc(edgesDF.src,edgesDF.dst).alias("src"),edgeDst(edgesDF.src,edgesDF.dst).alias("dst"),"probability").cache()
-    #edgesDF = edgesDF.select(edgeSrc(edgesDF.src,edgesDF.dst).alias("src"),edgeDst(edgesDF.src,edgesDF.dst).alias("dst"),"probability").persist( StorageLevel.MEMORY_AND_DISK)
+    edgesDF = edgesDF \
+                    .select(edgeSrc(edgesDF.src,edgesDF.dst).alias("src"),edgeDst(edgesDF.src,edgesDF.dst).alias("dst"),"probability") 
 
     # create dataframe that consist the nodes
     nodesDF= edgesDF \
@@ -50,20 +50,31 @@ def main(TopK:str):
                 .distinct() \
                 .withColumnRenamed("src", "id") 
 
+
+    # Create the Graph
+    #g = GraphFrame(nodesDF,edgesDF)
+    g = GraphFrame(nodesDF,edgesDF).cache()
+    #g = GraphFrame(nodesDF,edgesDF).persist(StorageLevel.MEMORY_AND_DISK)
+
     #spaces = [0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.1,0]
     spaces = [0.7,0.4,0]
     #spaces = [0.5,0]
 
+
+
+    trianglesFoundAlready = sc.sparkContext.broadcast(dict()) 
+
+
     # Finds all the triangles, "subgraph" = Dataframe
     for index,space in enumerate(spaces):
         
-        g = GraphFrame(nodesDF,edgesDF.filter(edgesDF.probability > space))
-        subgraph = g.find("(a)-[e]->(b); (b)-[e2]->(c); (a)-[e3]->(c)")
+        newGraph = GraphFrame(nodesDF, g.edges.filter("probability > " + str(space)))
+        #newGraph = g.filterEdges("probability > " + str(space))
+        subgraph = newGraph.find("(a)-[e]->(b); (b)-[e2]->(c); (a)-[e3]->(c)")
 
         # Concatenate 3 strings
         @udf("string")
         def triangleName(node1:str, node2:str, node3:str)-> str:
-            #nodes = [node1,node2,node3].sort()
             return node1 + "," + node2 + "," + node3
 
 
@@ -79,6 +90,13 @@ def main(TopK:str):
             probability = col(edge)["probability"]
             return cnt * probability
 
+
+        schema = StructType([
+                            StructField('Triangle', StringType(), True),
+                            StructField('Triangle_Prob', FloatType(), True),
+                            ])
+
+
         # creates new column ("Triangle) that contains the name of the triangle. Example, "143"
         # removes duplicates from the dataframe based on the "Triangle" column
         # creates new column ("Triangle_Prob") that contains the probability of the triangle
@@ -86,18 +104,21 @@ def main(TopK:str):
         # Take the first k elements
         TopKTriangles = subgraph \
                             .withColumn("Triangle",triangleName(subgraph.a["id"],subgraph.b["id"],subgraph.c["id"])) \
+                            .filter(col("Triangle").isin(list(trianglesFoundAlready.value.keys())) == False) \
                             .dropDuplicates(["Triangle"]) \
                             .withColumn("Triangle_Prob", reduce(triangleProbCalc, ["e", "e2", "e3"], lit(1))) \
-                            .sort("Triangle_Prob",ascending=False) \
                             .select("Triangle", "Triangle_Prob") \
-                            .head(int(TopK))
-
+                            .union(sc.createDataFrame([{"Triangle": triangleName, "Triangle_Prob":triangleProbability} for triangleName, triangleProbability in trianglesFoundAlready.value.items()], schema)) \
+                            .sort("Triangle_Prob",ascending=False) \
+                            .head(int(TopK)) 
 
 
 
 
         if len(TopKTriangles) == int(TopK):
             break
+        else:
+            trianglesFoundAlready = sc.sparkContext.broadcast(dict( [(row[0],row[1]) for row in TopKTriangles] ))
     
     for triangle in TopKTriangles:
         print(triangle)

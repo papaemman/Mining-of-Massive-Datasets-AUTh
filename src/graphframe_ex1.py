@@ -21,7 +21,7 @@ def main(TopK:str):
 
        
     #load dataset(edge list) to dataframe 
-    edgesDF = sc.read.option("header",True).option("inferSchema",True).csv("input/ex.csv")
+    edgesDF = sc.read.option("header",True).option("inferSchema",True).csv("./ex.csv")
 
     # returns the smallest string between 2 strings
     @udf("string")
@@ -49,12 +49,11 @@ def main(TopK:str):
                 .distinct() \
                 .withColumnRenamed("src", "id") 
 
-    #edgesDF.printSchema()
 
     # Create the Graph
     #g = GraphFrame(nodesDF,edgesDF)
-    #g = GraphFrame(nodesDF,edgesDF).cache()
-    g = GraphFrame(nodesDF,edgesDF).persist(StorageLevel.MEMORY_AND_DISK)
+    g = GraphFrame(nodesDF,edgesDF).cache()
+    #g = GraphFrame(nodesDF,edgesDF).persist(StorageLevel.MEMORY_AND_DISK)
 
     #spaces = [0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.1,0]
     spaces = [0.7,0.4,0]
@@ -70,7 +69,6 @@ def main(TopK:str):
         # Concatenate 3 strings
         @udf("string")
         def triangleName(node1:str, node2:str, node3:str)-> str:
-            nodes = [node1,node2,node3].sort()
             return node1 + "," + node2 + "," + node3
 
 
@@ -100,17 +98,13 @@ def main(TopK:str):
                             .head(int(TopK)) 
 
 
-        #.withColumn("Triangle",triangleName(subgraph.a["id"],subgraph.b["id"],subgraph.c["id"])) \
 
 
         if len(TopKTriangles) == int(TopK):
-            for triangle in TopKTriangles:
-                print(triangle)
             break
     
-    if len(TopKTriangles) < int(TopK): 
-        for triangle in TopKTriangles:
-            print(triangle)
+    for triangle in TopKTriangles:
+        print(triangle)
 
     sc.stop()
 

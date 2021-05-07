@@ -20,7 +20,7 @@ def main(TopK:str):
 
        
     #load dataset(edge list) to dataframe 
-    edgesDF = sc.read.option("header",True).option("inferSchema",True).csv("input/ex.csv")
+    edgesDF = sc.read.option("header",True).option("inferSchema",True).csv("./ex.csv")
 
     # returns the smallest string between 2 strings
     @udf("string")
@@ -60,7 +60,6 @@ def main(TopK:str):
     # Concatenate 3 strings
     @udf("string")
     def triangleName(node1:str, node2:str, node3:str)-> str:
-        nodes = [node1,node2,node3].sort()
         return node1 + "," + node2 + "," + node3
 
     # Na to kanw udf
