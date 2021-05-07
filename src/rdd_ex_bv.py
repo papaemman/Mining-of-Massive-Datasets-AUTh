@@ -1,4 +1,5 @@
 from pyspark import SparkContext
+from pyspark import StorageLevel
 import sys
 import time
 
@@ -16,7 +17,8 @@ def reOrderingSrcAndDstOfEgde(x:list)-> tuple:
 
 # Find which edges must exist to create triangles with bases a specific node
 # Returns also all the already existig edges.
-def findEdgesToSearchToCalculateAllTriangles(node:str, listOfEdges:list)-> list:
+def findEdgesToSearchToCalculateAllTriangles(node:str, listOfEdges:list, alreadyFoundedTriangles:dict)-> list:
+    #print(alreadyFoundedTriangles)
     
     listOfEdges.sort(key= lambda x: x[0])
     edgesToSearchAndEdgesThatExist = list()
@@ -26,9 +28,11 @@ def findEdgesToSearchToCalculateAllTriangles(node:str, listOfEdges:list)-> list:
         edge_probability = edge[1]
         edgesToSearchAndEdgesThatExist.append( ((node,dstNode), (edge_probability,"-1")) ) # The edges that exist. The "-1" is a flag that shows that this edge exist 
         for edge2 in listOfEdges[index + 1:]: # Calculate all the edges that are need to create triangles with basis this node
-            # The value "X" is dummy and is need in order to have the same structure in all key-value pairs
-            # The node in the key-value pair shows which node needs this edge to create a triangle
-            edgesToSearchAndEdgesThatExist.append( ((dstNode,edge2[0]), ("X",node)) )  
+            if node + "," + dstNode + "," + edge2[0] not in alreadyFoundedTriangles: # Triangle not found already  
+                # The value "X" is dummy and is need in order to have the same structure in all key-value pairs
+                # The node in the key-value pair shows which node needs this edge to create a triangle
+                edgesToSearchAndEdgesThatExist.append( ((dstNode,edge2[0]), ("X",node)) )  
+
     return edgesToSearchAndEdgesThatExist
 
 
@@ -70,25 +74,37 @@ def calculateTriangles(node, listOfEdges:list)-> list:
 
 def main(TopK:str):
     sc = SparkContext(appName="Top-k most probable triangles")
+    edgesRDD = sc.textFile("./a.csv").map(lambda x: x.split(",")) 
+    #edgesRDD = sc.textFile("./a.csv").map(lambda x: x.split(",")).cache() 
+    #edgesRDD = sc.textFile("./a.csv").map(lambda x: x.split(",")).persist(StorageLevel.MEMORY_AND_DISK) 
+    spaces = [0.7, 0.4, 0]
+    trianglesFoundAlready = sc.broadcast(dict())
     
-    edgesRDD = sc.textFile("./a.csv") 
-    trianglesRDD = edgesRDD \
-                    .map(lambda x: x.split(",")) \
+    for space in spaces:
+
+        triangles = edgesRDD \
+                    .filter(lambda x: float(x[2]) > space) \
                     .map(lambda x: reOrderingSrcAndDstOfEgde(x)) \
                     .groupByKey() \
-                    .flatMap(lambda x: findEdgesToSearchToCalculateAllTriangles(x[0],list(x[1]))) \
+                    .flatMap(lambda x: findEdgesToSearchToCalculateAllTriangles(x[0],list(x[1]),trianglesFoundAlready.value)) \
                     .groupByKey() \
                     .flatMap(lambda x: returnTheSearchedEdgesThatExist(x[0], list(x[1]))) \
                     .groupByKey() \
                     .flatMap(lambda x: calculateTriangles(x[0], list(x[1]))) \
+                    .union(sc.parallelize(trianglesFoundAlready.value.items())) \
                     .sortBy(lambda x: x[1], ascending=False) \
                     .take(int(TopK)) 
 
+        if len(triangles) == int(TopK): # Found the top-k probable triangles
+            break
+        else:
+            trianglesFoundAlready = sc.broadcast(dict((triangleName, triangleProbability) for triangleName, triangleProbability in triangles))
 
-    for triangle in trianglesRDD:
+    for triangle in triangles:
         print(triangle)
-    
+
     sc.stop()
+    
 
 
 if __name__ == "__main__":

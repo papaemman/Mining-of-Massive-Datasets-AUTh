@@ -1,4 +1,5 @@
 from pyspark import SparkContext
+from pyspark import StorageLevel
 import sys
 import time
 
@@ -12,6 +13,7 @@ def reOrderingSrcAndDstOfEgde(x:list)-> tuple:
         return (src,(dst,probability))
     else:
         return (dst,(src,probability))
+
 
 
 # Find which edges must exist to create triangles with bases a specific node
@@ -30,6 +32,9 @@ def findEdgesToSearchToCalculateAllTriangles(node:str, listOfEdges:list)-> list:
             # The node in the key-value pair shows which node needs this edge to create a triangle
             edgesToSearchAndEdgesThatExist.append( ((dstNode,edge2[0]), ("X",node)) )  
     return edgesToSearchAndEdgesThatExist
+
+
+
 
 
 # return the edges that were searched to calculate the existing triangles to the nodes that need them 
@@ -70,10 +75,15 @@ def calculateTriangles(node, listOfEdges:list)-> list:
 
 def main(TopK:str):
     sc = SparkContext(appName="Top-k most probable triangles")
+    edgesRDD = sc.textFile("./a.csv").map(lambda x: x.split(",")) 
+    #edgesRDD = sc.textFile("./a.csv").map(lambda x: x.split(",")).cache() 
+    #edgesRDD = sc.textFile("./a.csv").map(lambda x: x.split(",")).persist(StorageLevel.MEMORY_AND_DISK) 
+    spaces = [0.7, 0.4, 0]
     
-    edgesRDD = sc.textFile("./a.csv") 
-    trianglesRDD = edgesRDD \
-                    .map(lambda x: x.split(",")) \
+    for space in spaces:
+
+        triangles = edgesRDD \
+                    .filter(lambda x: float(x[2]) > space) \
                     .map(lambda x: reOrderingSrcAndDstOfEgde(x)) \
                     .groupByKey() \
                     .flatMap(lambda x: findEdgesToSearchToCalculateAllTriangles(x[0],list(x[1]))) \
@@ -84,11 +94,14 @@ def main(TopK:str):
                     .sortBy(lambda x: x[1], ascending=False) \
                     .take(int(TopK)) 
 
+        if len(triangles) == int(TopK): # Found the top-k probable triangles
+            break
 
-    for triangle in trianglesRDD:
+    for triangle in triangles:
         print(triangle)
-    
+
     sc.stop()
+    
 
 
 if __name__ == "__main__":
