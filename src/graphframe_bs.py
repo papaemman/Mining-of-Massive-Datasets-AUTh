@@ -1,23 +1,22 @@
 from pyspark import SparkContext
+from pyspark import StorageLevel
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf,lit,col,when
 from graphframes.examples import Graphs
 from graphframes import *
 from functools import reduce
+import os
 import sys
 import time
+from csv import writer
 #from pyspark.sql import *
 
 
 
 
+def main(TopK:str, data_efficiency:str):
 
-
-
-def main(TopK:str):
-
-    sc = SparkSession.builder.appName("Top-k most probable triangles").getOrCreate()
-
+    sc = SparkSession.builder.appName("Top-k most probable triangles").getOrCreate()  
        
     #load dataset(edge list) to dataframe 
     edgesDF = sc.read.option("header",True).option("inferSchema",True).csv("./ex.csv")
@@ -50,9 +49,13 @@ def main(TopK:str):
 
 
     # Create the Graph
-    g = GraphFrame(nodesDF,edgesDF)
-    #g = GraphFrame(nodesDF,edgesDF).cache()
-    #g = GraphFrame(nodesDF,edgesDF).persist(StorageLevel.MEMORY_AND_DISK)
+    if data_efficiency == "None":
+        g = GraphFrame(nodesDF,edgesDF)
+    elif data_efficiency == "cache":
+        g = GraphFrame(nodesDF,edgesDF).cache()
+    elif data_efficiency == "persist":
+        g = GraphFrame(nodesDF,edgesDF).persist(StorageLevel.MEMORY_AND_DISK)
+
 
     # Finds all the triangles, "subgraph" = Dataframe
     subgraph = g.find("(a)-[e]->(b); (b)-[e2]->(c); (a)-[e3]->(c)")
@@ -89,13 +92,24 @@ def main(TopK:str):
         print(triangle)
 
     sc.stop()
-
+    
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Give k as input")
         sys.exit()
     start = time.time()
-    main(sys.argv[1])
+    main(TopK = sys.argv[1], data_efficiency = sys.argv[2])
     end = time.time()
-    print("Execution time : " + str(end - start))
+    total_time = end-start
+    print("Execution time : " + str(total_time))
+
+    # Define a variable to store the number of cores (equivalent with spark executors in local mode)
+    cores = 3
+
+    with open('experiments.csv', 'a+', newline='') as experiments:
+        # Create a writer object from csv module
+        csv_writer = writer(experiments)
+        # Add contents of list as last row in the csv file
+        csv_writer.writerow([os.path.basename(__file__), cores, sys.argv[1], sys.argv[2], total_time])
+        

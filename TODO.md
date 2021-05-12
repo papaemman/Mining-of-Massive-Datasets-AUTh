@@ -6,9 +6,11 @@
 
 [X] Implement a low level solution
 
-[X] Run experiments for different implementations (3+1) and different number of k => time
+[X] Run experiments for different implementations (3+1), different number of k and different number of cores, nocach()/cache()/persist() => time
 
 [X] Write report (overleaf)
+
+Overleaf: <https://www.overleaf.com/project/6092d7d4dc238d5f619dc701>
 
 [X] Presentation (google slides)
 

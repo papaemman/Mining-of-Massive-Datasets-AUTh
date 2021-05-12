@@ -1,0 +1,13 @@
+script,cores,k,data_efficiency,time
+graphframe_bs.py,3,1,None,14.691598176956177
+graphframe_bs.py,3,1,cache,14.222990274429321
+graphframe_bs.py,3,1,persist,16.016372442245483
+graphframe_bs.py,3,10,None,20.493314504623413
+graphframe_bs.py,3,10,cache,15.65678596496582
+graphframe_bs.py,3,10,persist,15.70299482345581
+graphframe_bs.py,3,100,None,15.898622989654541
+graphframe_bs.py,3,100,cache,14.014330387115479
+graphframe_bs.py,3,100,persist,16.575453758239746
+graphframe_bs.py,3,1000,None,13.460694551467896
+graphframe_bs.py,3,1000,cache,15.511481523513794
+graphframe_bs.py,3,1000,persist,16.739772081375122
