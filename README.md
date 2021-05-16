@@ -125,9 +125,12 @@ docker rm ApacheSpark
 **How to run src/ scripts using spark-submit**
 
 ```bash
-spark-submit --master local[3] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 src/graphframe_bs.py 6
+spark-submit --master local[3] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 src/graphframe_bs.py 2 cache
 spark-submit --master local[3] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 src/graphframe_ex1.py 6
 spark-submit --master local[3] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 src/graphframe_ex2.py 6
+
+spark-submit --master local[3] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 src/rdd_bs.py 2
+spark-submit --master local[3] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 src/rdd_fast.py 2
 ```
 
 ---
