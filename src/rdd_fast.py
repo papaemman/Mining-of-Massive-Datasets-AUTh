@@ -73,10 +73,15 @@ def main(TopK:str, threshold:str):
 
     sc = SparkContext(appName="Top-k most probable triangles")
     
-    preprocessedEdges_RDD = sc.textFile("./a.csv") \
+    preprocessedEdges_RDD = sc.textFile("./input/collins.csv") \
                             .map(lambda x: x.split(",")) \
                             .sortBy(lambda x: x[2], ascending=False) \
                             .map(lambda x: reOrderingSrcAndDstOfEgde(x)) 
+
+    # preprocessedEdges_RDD = sc.textFile("./input/ex.csv") \
+    #                         .map(lambda x: x.split(",")) \
+    #                         .sortBy(lambda x: x[2], ascending=False) \
+    #                         .map(lambda x: reOrderingSrcAndDstOfEgde(x)) 
 
     heavyTriangles = list()
     finalThreshold = threshold

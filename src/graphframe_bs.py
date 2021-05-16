@@ -18,8 +18,16 @@ def main(TopK:str, data_efficiency:str):
 
     sc = SparkSession.builder.appName("Top-k most probable triangles").getOrCreate()  
        
-    #load dataset(edge list) to dataframe 
-    edgesDF = sc.read.option("header",True).option("inferSchema",True).csv("./ex.csv")
+    # Load dataset(edge list) to dataframe 
+    
+    edgesDF = sc.read.option("header",True).option("inferSchema",True).csv("./input/ex_header.csv")
+    
+    # edgesDF = sc.read.option("header",False).option("inferSchema",True).csv("./input/collins.csv")
+    # edgesDF = edgesDF.selectExpr("_c0 as src", "_c1 as dst", "_c2 as probability")
+
+    # edgesDF.show() 
+    # print(edgesDF.dtypes)
+
 
     # returns the smallest string between 2 strings
     @udf("string")
@@ -37,8 +45,10 @@ def main(TopK:str, data_efficiency:str):
 
     
     # re-order the source and destination of the edges. Source always the smallest id
+    # edgesDF.show()
     edgesDF = edgesDF \
                     .select(edgeSrc(edgesDF.src,edgesDF.dst).alias("src"),edgeDst(edgesDF.src,edgesDF.dst).alias("dst"),"probability") 
+    # edgesDF.show()
 
     # create dataframe that consist the nodes
     nodesDF= edgesDF \
@@ -46,7 +56,6 @@ def main(TopK:str, data_efficiency:str):
                 .union(edgesDF.select(edgesDF.dst)) \
                 .distinct() \
                 .withColumnRenamed("src", "id") 
-
 
     # Create the Graph
     if data_efficiency == "None":
@@ -80,13 +89,26 @@ def main(TopK:str, data_efficiency:str):
     # creates new column ("Triangle_Prob") that contains the probability of the triangle
     # sorts the dataframe
     # Take the first k elements
+    
+    
+    # TopKTriangles = subgraph \
+    #                         .withColumn("Triangle",triangleName(subgraph.a["id"],subgraph.b["id"],subgraph.c["id"])) \
+    #                         .dropDuplicates(["Triangle"]) \
+    #                         .withColumn("Triangle_Prob", reduce(triangleProbCalc, ["e", "e2", "e3"], lit(1))) \
+    #                         .sort("Triangle_Prob",ascending=False) \
+    #                         .select("Triangle","Triangle_Prob") \
+    #                         .head(int(TopK)) 
+    
+    # .dropDuplicates(["Triangle"]) isn't necessary!
+    
     TopKTriangles = subgraph \
                             .withColumn("Triangle",triangleName(subgraph.a["id"],subgraph.b["id"],subgraph.c["id"])) \
-                            .dropDuplicates(["Triangle"]) \
                             .withColumn("Triangle_Prob", reduce(triangleProbCalc, ["e", "e2", "e3"], lit(1))) \
                             .sort("Triangle_Prob",ascending=False) \
                             .select("Triangle","Triangle_Prob") \
                             .head(int(TopK)) 
+
+
 
     for triangle in TopKTriangles:
         print(triangle)

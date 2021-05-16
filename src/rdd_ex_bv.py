@@ -74,9 +74,14 @@ def calculateTriangles(node, listOfEdges:list)-> list:
 
 def main(TopK:str):
     sc = SparkContext(appName="Top-k most probable triangles")
-    edgesRDD = sc.textFile("./a.csv").map(lambda x: x.split(",")) 
-    #edgesRDD = sc.textFile("./a.csv").map(lambda x: x.split(",")).cache() 
-    #edgesRDD = sc.textFile("./a.csv").map(lambda x: x.split(",")).persist(StorageLevel.MEMORY_AND_DISK) 
+
+    edgesRDD = sc.textFile("./input/collins.csv").map(lambda x: x.split(",")) 
+
+    # edgesRDD = sc.textFile("./ex.csv").map(lambda x: x.split(",")) 
+    # edgesRDD = sc.textFile("./input/ex.csv").map(lambda x: x.split(",")).cache() 
+    # edgesRDD = sc.textFile("./input/ex.csv").map(lambda x: x.split(",")).persist(StorageLevel.MEMORY_AND_DISK) 
+    
+    
     spaces = [0.7, 0.4, 0]
     trianglesFoundAlready = sc.broadcast(dict())
     

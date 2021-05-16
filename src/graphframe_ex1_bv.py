@@ -19,8 +19,11 @@ def main(TopK:str, data_efficiency:str):
     sc = SparkSession.builder.appName("Top-k most probable triangles").getOrCreate()
 
        
-    #load dataset(edge list) to dataframe 
-    edgesDF = sc.read.option("header",True).option("inferSchema",True).csv("./ex.csv")
+    # Load dataset(edge list) to dataframe 
+    # edgesDF = sc.read.option("header",True).option("inferSchema",True).csv("./input/ex.csv")
+
+    edgesDF = sc.read.option("header",False).option("inferSchema",True).csv("./input/collins.csv")
+    edgesDF = edgesDF.selectExpr("_c0 as src", "_c1 as dst", "_c2 as probability")
 
     # returns the smallest string between 2 strings
     @udf("string")
