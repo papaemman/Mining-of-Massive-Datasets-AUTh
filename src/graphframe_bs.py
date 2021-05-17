@@ -23,8 +23,8 @@ def main(TopK:str):
     # edgesDF = sc.read.option("header",False).option("inferSchema",True).csv("./input/collins.csv")
 
     
-    edgesDF = sc.read.option("header",False).option("inferSchema",True).csv("./input/artists_uniform.csv")
-    # edgesDF = sc.read.option("header",False).option("inferSchema",True).csv("./input/artists_normal.csv")
+    # edgesDF = sc.read.option("header",False).option("inferSchema",True).csv("./input/artists_uniform.csv")
+    edgesDF = sc.read.option("header",False).option("inferSchema",True).csv("./input/artists_normal.csv")
     # edgesDF = sc.read.option("header",False).option("inferSchema",True).csv("./input/artists_power_law.csv")
 
     

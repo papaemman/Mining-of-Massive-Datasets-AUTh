@@ -25,9 +25,9 @@ print("Run experiments")
 
 for script, cores, dataset, k in [(script, cores,  dataset, k) 
 
-                                                    for script in ["rdd_bs.py", "rdd_fast.py"] # "graphframe_bs.py", 
+                                                    for script in ["rdd_bs.py","rdd_fast.py"] # "graphframe_bs.py", "rdd_bs.py",
                                                     for cores in [1,2,8]
-                                                    for dataset in ["artists_uniform"] # "artists_uniform", "artists_normal", "artists_power_law"
+                                                    for dataset in ["artists_normal"] # "artists_uniform", "artists_normal", "artists_power_law"
                                                     for k in [10, 100, 1000]
                                                     
                                                     ]: 
@@ -57,7 +57,7 @@ for script, cores, dataset, k in [(script, cores,  dataset, k)
 
 
 ## // RUN Experiments //
-# $ python run_experiments.py
+# $ python run_experiments.py & 
 
 # // Spark-submit examples //
 # spark-submit --master local[1] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 src/rdd_fast.py 1000 0.8

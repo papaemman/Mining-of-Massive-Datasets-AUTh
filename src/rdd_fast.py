@@ -76,8 +76,8 @@ def main(TopK:str, threshold:str):
 
     data = sc.textFile("./input/collins.csv")
     
-    data = sc.textFile("./input/artists_uniform.csv")
-    # data = sc.textFile("./input/artists_normal.csv")
+    # data = sc.textFile("./input/artists_uniform.csv")
+    data = sc.textFile("./input/artists_normal.csv")
     # data = sc.textFile("./input/artists_power_law.csv")
 
     preprocessedEdges_RDD = data \

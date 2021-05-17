@@ -74,8 +74,8 @@ def main(TopK:str):
     # edgesRDD = sc.textFile("./input/ex.csv") 
     # edgesRDD = sc.textFile("./input/collins.csv") 
 
-    edgesRDD = sc.textFile("./input/artists_uniform.csv")
-    # edgesRDD = sc.textFile("./input/artists_normal.csv")
+    # edgesRDD = sc.textFile("./input/artists_uniform.csv")
+    edgesRDD = sc.textFile("./input/artists_normal.csv")
     # edgesRDD = sc.textFile("./input/artists_power_law.csv")
 
     trianglesRDD = edgesRDD \
