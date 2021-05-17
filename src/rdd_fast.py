@@ -73,7 +73,14 @@ def main(TopK:str, threshold:str):
 
     sc = SparkContext(appName="Top-k most probable triangles")
     
-    preprocessedEdges_RDD = sc.textFile("./input/collins.csv") \
+
+    data = sc.textFile("./input/collins.csv")
+    
+    data = sc.textFile("./input/artists_uniform.csv")
+    # data = sc.textFile("./input/artists_normal.csv")
+    # data = sc.textFile("./input/artists_power_law.csv")
+
+    preprocessedEdges_RDD = data \
                             .map(lambda x: x.split(",")) \
                             .sortBy(lambda x: x[2], ascending=False) \
                             .map(lambda x: reOrderingSrcAndDstOfEgde(x)) 
@@ -173,19 +180,27 @@ def main(TopK:str, threshold:str):
 
 
 if __name__ == "__main__":
+
     if len(sys.argv) < 2:
         print("Give k as input")
         sys.exit()
+    
     if len(sys.argv) < 3:
-        print("Give Threshold as input")
-        sys.exit()
+        # print("Give Threshold as input")
+        # sys.exit()
+        k = sys.argv[1]
+        threshold = 0.8
+
     if len(sys.argv) == 3:
         if sys.argv[2] not in ["0.1","0.2","0.3","0.4","0.5","0.6","0.7","0.8","0.9"]:
             print("Threshold must be :")
             for i in ["0.1","0.2","0.3","0.4","0.5","0.6","0.7","0.8","0.9"]:
                 print(i)
             sys.exit()
+        k = sys.argv[1]
+        threshold = sys.argv[2]
+    
     start = time.time()
-    main(sys.argv[1],sys.argv[2])
+    main(k,threshold)
     end = time.time()
     print("Execution time : " + str(end - start))

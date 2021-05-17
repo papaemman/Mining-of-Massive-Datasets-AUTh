@@ -5,25 +5,30 @@ from pyspark.sql.functions import udf,lit,col,when
 from graphframes.examples import Graphs
 from graphframes import *
 from functools import reduce
-import os
 import sys
 import time
-from csv import writer
 #from pyspark.sql import *
 
 
 
 
-def main(TopK:str, data_efficiency:str):
+def main(TopK:str):
 
     sc = SparkSession.builder.appName("Top-k most probable triangles").getOrCreate()  
        
-    # Load dataset(edge list) to dataframe 
+    ## Load dataset(edge list) to dataframe 
     
-    edgesDF = sc.read.option("header",True).option("inferSchema",True).csv("./input/ex_header.csv")
-    
+    # edgesDF = sc.read.option("header",True).option("inferSchema",True).csv("./input/ex_header.csv")
+
     # edgesDF = sc.read.option("header",False).option("inferSchema",True).csv("./input/collins.csv")
-    # edgesDF = edgesDF.selectExpr("_c0 as src", "_c1 as dst", "_c2 as probability")
+
+    
+    edgesDF = sc.read.option("header",False).option("inferSchema",True).csv("./input/artists_uniform.csv")
+    # edgesDF = sc.read.option("header",False).option("inferSchema",True).csv("./input/artists_normal.csv")
+    # edgesDF = sc.read.option("header",False).option("inferSchema",True).csv("./input/artists_power_law.csv")
+
+    
+    edgesDF = edgesDF.selectExpr("_c0 as src", "_c1 as dst", "_c2 as probability")
 
     # edgesDF.show() 
     # print(edgesDF.dtypes)
@@ -58,12 +63,9 @@ def main(TopK:str, data_efficiency:str):
                 .withColumnRenamed("src", "id") 
 
     # Create the Graph
-    if data_efficiency == "None":
-        g = GraphFrame(nodesDF,edgesDF)
-    elif data_efficiency == "cache":
-        g = GraphFrame(nodesDF,edgesDF).cache()
-    elif data_efficiency == "persist":
-        g = GraphFrame(nodesDF,edgesDF).persist(StorageLevel.MEMORY_AND_DISK)
+    g = GraphFrame(nodesDF,edgesDF)
+    # g = GraphFrame(nodesDF,edgesDF).cache()
+    # g = GraphFrame(nodesDF,edgesDF).persist(StorageLevel.MEMORY_AND_DISK)
 
 
     # Finds all the triangles, "subgraph" = Dataframe
@@ -121,17 +123,10 @@ if __name__ == "__main__":
         print("Give k as input")
         sys.exit()
     start = time.time()
-    main(TopK = sys.argv[1], data_efficiency = sys.argv[2])
+    main(TopK = sys.argv[1])
     end = time.time()
     total_time = end-start
     print("Execution time : " + str(total_time))
 
-    # Define a variable to store the number of cores (equivalent with spark executors in local mode)
-    cores = 3
 
-    with open('experiments.csv', 'a+', newline='') as experiments:
-        # Create a writer object from csv module
-        csv_writer = writer(experiments)
-        # Add contents of list as last row in the csv file
-        csv_writer.writerow([os.path.basename(__file__), cores, sys.argv[1], sys.argv[2], total_time])
         

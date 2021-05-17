@@ -10,7 +10,7 @@
 
 [X] Sanity check. Compare results (not time)
 
-1. graphframe_bs.py
+1. `graphframe_bs.py`
 
 ```bash
 spark-submit --master local[3] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 src/graphframe_bs.py 2 cache
@@ -41,7 +41,7 @@ Execution time : 27.456836223602295
 
 Different results triangles on each experiment, but with the same probability!
 
-2. rdd_bs.py
+2. `rdd_bs.py`
 
 ```bash
 spark-submit --master local[3] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 src/rdd_bs.py 10
@@ -59,7 +59,7 @@ spark-submit --master local[3] --packages graphframes:graphframes:0.8.1-spark3.0
     Execution time : 8.00922679901123
 ```
 
-3. rdd_fast.py
+3. `rdd_fast.py`
 
 ```bash
 spark-submit --master local[3] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 src/rdd_fast.py 10 0.8
