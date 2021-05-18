@@ -1,4 +1,5 @@
 from pyspark import SparkContext
+from pyspark.sql.types import StructType, StructField, StringType, FloatType
 import numpy as np
 import sys
 import time
@@ -13,6 +14,8 @@ def reOrderingSrcAndDstOfEgde(x:list)-> tuple:
         return (src,(dst,probability))
     else:
         return (dst,(src,probability))
+
+
 
 
 # Find which edges must exist to create triangles with bases a specific node
@@ -31,6 +34,31 @@ def findEdgesToSearchToCalculateAllTriangles(node:str, listOfEdges:list)-> list:
             # The node in the key-value pair shows which node needs this edge to create a triangle
             edgesToSearchAndEdgesThatExist.append( ((dstNode,edge2[0]), ("X",node)) )  
     return edgesToSearchAndEdgesThatExist
+
+
+# Find which edges must exist to create triangles with bases a specific node
+# Returns also all the already existig edges.
+# Same with above function except it allows only triangles
+# that have not found already to be searched
+def findEdgesToSearchToCalculateAllTriangles_bv(node:str, listOfEdges:list, alreadyFoundedTriangles:dict)-> list:
+    #print(alreadyFoundedTriangles)
+    
+    listOfEdges.sort(key= lambda x: x[0])
+    edgesToSearchAndEdgesThatExist = list()
+   
+    for index,edge in enumerate(listOfEdges):
+        dstNode = edge[0]
+        edge_probability = edge[1]
+        edgesToSearchAndEdgesThatExist.append( ((node,dstNode), (edge_probability,"-1")) ) # The edges that exist. The "-1" is a flag that shows that this edge exist 
+        for edge2 in listOfEdges[index + 1:]: # Calculate all the edges that are need to create triangles with basis this node
+            if node + "," + dstNode + "," + edge2[0] not in alreadyFoundedTriangles: # Triangle not found already  
+                # The value "X" is dummy and is need in order to have the same structure in all key-value pairs
+                # The node in the key-value pair shows which node needs this edge to create a triangle
+                edgesToSearchAndEdgesThatExist.append( ((dstNode,edge2[0]), ("X",node)) )  
+
+    return edgesToSearchAndEdgesThatExist
+
+
 
 
 # return the edges that were searched to calculate the existing triangles to the nodes that need them 
@@ -78,7 +106,6 @@ def main(TopK:str, threshold:str):
                             .sortBy(lambda x: x[2], ascending=False) \
                             .map(lambda x: reOrderingSrcAndDstOfEgde(x)) 
 
-
     try:
         # The 1st and 2nd edges with the highest probabilty in the graph
         FirstHeaviestEdge, SecondHeaviestEdge = preprocessedEdges_RDD.take(2)
@@ -93,6 +120,15 @@ def main(TopK:str, threshold:str):
     SecondHeaviestEdge_Probability  = float(SecondHeaviestEdge[1][1])
 
 
+    #trianglesFoundAlready = sc.sparkContext.broadcast(dict()) 
+
+    schema = StructType([
+                        StructField('Triangle', StringType(), True),
+                        StructField('Triangle_Prob', FloatType(), True),
+                        ])
+
+
+
     # if heavy edges set do not have top-k triangles
     # then heavy edges has to change
     for thd in np.arange(float(threshold), -0.1, -0.1):
@@ -103,27 +139,41 @@ def main(TopK:str, threshold:str):
         # The Heavy edges set
         heavyEdges_RDD = preprocessedEdges_RDD.filter(lambda x: x[1][1] >= str(thd)).cache() 
 
-
     
-        # Store in a list the top-k triangles with their probabilities
-        # We are not yet sure that the Top-K triangles that we find
-        # in the Heavy edges set are the global Top-K heavy triangles
-        TopKTrianglesInHeavySet = heavyEdges_RDD \
+        if thd == float(threshold): # 1st iteration
+
+            # Store in a list the top-k triangles with their probabilities
+            # We are not yet sure that the Top-K triangles that we find
+            # in the Heavy edges set are the global Top-K heavy triangles
+            TopKTrianglesInHeavySet = heavyEdges_RDD \
                                     .groupByKey() \
                                     .flatMap(lambda x: findEdgesToSearchToCalculateAllTriangles(x[0],list(x[1]))) \
                                     .groupByKey() \
                                     .flatMap(lambda x: returnTheSearchedEdgesThatExist(x[0], list(x[1]))) \
                                     .groupByKey() \
                                     .flatMap(lambda x: calculateTriangles(x[0], list(x[1]))) \
-                                    .sortBy(lambda x: x[1], ascending=True) \
+                                    .sortBy(lambda x: x[1], ascending=False) \
                                     .take(int(TopK)) 
+        else:
+            # Store in a list the top-k triangles with their probabilities
+            # We are not yet sure that the Top-K triangles that we find
+            # in the Heavy edges set are the global Top-K heavy triangles
+            TopKTrianglesInHeavySet = heavyEdges_RDD \
+                                    .groupByKey() \
+                                    .flatMap(lambda x: findEdgesToSearchToCalculateAllTriangles_bv(x[0],list(x[1]),trianglesFoundAlready.value)) \
+                                    .groupByKey() \
+                                    .flatMap(lambda x: returnTheSearchedEdgesThatExist(x[0], list(x[1]))) \
+                                    .groupByKey() \
+                                    .flatMap(lambda x: calculateTriangles(x[0], list(x[1]))) \
+                                    .union(sc.parallelize(trianglesFoundAlready.value.items())) \
+                                    .sortBy(lambda x: x[1], ascending=False) \
+                                    .take(int(TopK))
+        
+        trianglesFoundAlready = sc.broadcast(dict( [(row[0],row[1]) for row in TopKTrianglesInHeavySet] ))
 
         numberOfTriangles = len(TopKTrianglesInHeavySet)
-        
-        if numberOfTriangles == int(TopK):  # Heavy edges set has top-k triangles
 
-            # had to decrease the threshold to 0 to find the top-k triangles.
-            # Consequently we are sure that the Top-k triangles of the heavy set are also the global Top-K 
+        if numberOfTriangles == int(TopK):  # Heavy edges set has top-k triangles
             if finalThreshold == "0":
                 for triangle in TopKTrianglesInHeavySet:
                     print(triangle)
@@ -132,10 +182,9 @@ def main(TopK:str, threshold:str):
     if numberOfTriangles == 0: # The graph has no triangles
         print("The graph has no triangles")
         sys.exit()
-
-    if numberOfTriangles < int(TopK): # Global top-k have found already
-        for triangles in TopKTrianglesInHeavySet:
-            print(triangles)
+    elif numberOfTriangles < int(TopK): # Global top-k have found already
+        for triangle in TopKTrianglesInHeavySet:
+            print(triangle)
 
     elif finalThreshold != "0": 
 
@@ -157,18 +206,19 @@ def main(TopK:str, threshold:str):
         finalHeavyEdges = heavyEdges_RDD \
                                         .union(lightEdges_RDD) \
                                         .groupByKey() \
-                                        .flatMap(lambda x: findEdgesToSearchToCalculateAllTriangles(x[0],list(x[1]))) \
+                                        .flatMap(lambda x: findEdgesToSearchToCalculateAllTriangles_bv(x[0],list(x[1]),trianglesFoundAlready.value)) \
                                         .groupByKey() \
                                         .flatMap(lambda x: returnTheSearchedEdgesThatExist(x[0], list(x[1]))) \
                                         .groupByKey() \
                                         .flatMap(lambda x: calculateTriangles(x[0], list(x[1]))) \
+                                        .union(sc.parallelize(trianglesFoundAlready.value.items())) \
                                         .sortBy(lambda x: x[1], ascending=False) \
                                         .take(int(TopK)) 
 
     
     
-        for i in finalHeavyEdges:
-            print(i)
+        for triangle in finalHeavyEdges:
+            print(triangle)
 
     sc.stop()
 
