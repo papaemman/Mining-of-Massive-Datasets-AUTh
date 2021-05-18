@@ -88,11 +88,13 @@ def main(TopK:str):
                     .groupByKey() \
                     .flatMap(lambda x: calculateTriangles(x[0], list(x[1]))) \
                     .sortBy(lambda x: x[1], ascending=False) \
-                    .take(int(TopK)) 
+                    .count()
+                    # .take(int(TopK)) 
 
+    print(trianglesRDD)
 
-    for triangle in trianglesRDD:
-        print(triangle)
+    # for triangle in trianglesRDD:
+    #     print(triangle)
     
     sc.stop()
 

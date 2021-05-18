@@ -46,3 +46,9 @@ src/rdd_fast.py,8,artists_uniform,100,49.36947250366211
 src/rdd_fast.py,8,artists_uniform,1000,48.86347508430481
 src/rdd_bs.py,1,artists_normal,10,1094.2201969623566
 src/rdd_bs.py,1,artists_normal,100,1039.6120150089264
+src/rdd_bs.py,1,artists_normal,1000,1073.2067003250122
+src/rdd_bs.py,2,artists_normal,10,714.7728862762451
+src/rdd_bs.py,2,artists_normal,100,874.1516060829163
+src/rdd_bs.py,2,artists_normal,1000,1018.7902569770813
+src/rdd_bs.py,8,artists_normal,10,1020.894445180893
+src/rdd_bs.py,8,artists_normal,100,1048.6929054260254

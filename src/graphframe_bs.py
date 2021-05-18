@@ -70,7 +70,8 @@ def main(TopK:str):
 
     # Finds all the triangles, "subgraph" = Dataframe
     subgraph = g.find("(a)-[e]->(b); (b)-[e2]->(c); (a)-[e3]->(c)")
-
+    print(subgraph.count())
+    
     # Concatenate 3 strings
     @udf("string")
     def triangleName(node1:str, node2:str, node3:str)-> str:
