@@ -35,15 +35,15 @@ def main(TopK:str):
 
 
     # returns the smallest string between 2 strings
-    @udf("string")
-    def edgeSrc(src:str,dst:str)-> str:
+    @udf("integer")
+    def edgeSrc(src:int,dst:int)-> int:
         if src < dst: 
             return src
         return dst
 
     # returns the biggest string between 2 strings
-    @udf("string")
-    def edgeDst(src:str,dst:str)-> str:
+    @udf("integer")
+    def edgeDst(src:int,dst:int)-> int:
         if src < dst: 
             return dst
         return src
@@ -74,8 +74,8 @@ def main(TopK:str):
     
     # Concatenate 3 strings
     @udf("string")
-    def triangleName(node1:str, node2:str, node3:str)-> str:
-        return node1 + "," + node2 + "," + node3
+    def triangleName(node1:int, node2:int, node3:int)-> str:
+        return str(node1) + "," + str(node2) + "," + str(node3)
 
     # Na to kanw udf
     def triangleProbCalc(cnt, edge):
