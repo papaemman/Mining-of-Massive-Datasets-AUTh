@@ -22,7 +22,9 @@ def main(TopK:str):
        
     # Load dataset(edge list) to dataframe 
     # edgesDF = sc.read.option("header",True).option("inferSchema",True).csv("./input/ex.csv")
-    edgesDF = sc.read.option("header",False).option("inferSchema",True).csv("./input/collins.csv")
+    # edgesDF = sc.read.option("header",False).option("inferSchema",True).csv("./input/collins.csv")
+    edgesDF = sc.read.option("header",False).option("inferSchema",True).csv("./input/ex_exploit_bug.csv")
+    
     edgesDF = edgesDF.selectExpr("_c0 as src", "_c1 as dst", "_c2 as probability")
 
     # returns the smallest string between 2 strings

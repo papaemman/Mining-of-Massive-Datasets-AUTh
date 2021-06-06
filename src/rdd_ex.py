@@ -77,7 +77,8 @@ def main(TopK:str):
     
     sc = SparkContext(appName="Top-k most probable triangles")
 
-    edgesRDD = sc.textFile("./input/collins.csv").map(lambda x: x.split(",")) 
+    # edgesRDD = sc.textFile("./input/collins.csv").map(lambda x: x.split(",")) 
+    edgesRDD = sc.textFile("./input/ex_exploit_bug.csv").map(lambda x: x.split(",")) 
 
     # edgesRDD = sc.textFile("./input/ex.csv").map(lambda x: x.split(",")) 
     # edgesRDD = sc.textFile("./input/ex.csv").map(lambda x: x.split(",")).cache() 

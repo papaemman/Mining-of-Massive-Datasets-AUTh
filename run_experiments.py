@@ -1,13 +1,14 @@
 ## // Run experiments //
 
+# --> Parameters
 # 1. script: for different implementations
 # 2. dataset: for different datasets (different distributions in edges)
 # 3. cores: for different number of cores
 # 4. k: for different k
-# 5. data_efficiency: for different data_efficiency methods (cache, persistance)
-# Result: Cound running time
+# --> Result: Count running time
 
 
+# Load modules
 import os
 from time import time
 from csv import writer
@@ -15,26 +16,22 @@ from csv import writer
 
 print("Run experiments")
 
-# ["graphframe_bs.py", "graphframe_ex1_bv.py", "graphframe_ex1.py",
-#  "graphframe_ex2_bv.py",  "graphframe_ex2.py",
-#  "rdd_bs.py", "rdd_ex_bv.py", "rdd_ex.py", "rdd_fast.py"]
-
-# for data_efficiency in ["None", "cache", "persist"]
-
-# for dataset in ["normal", "uniform", "power_law"]
+# scripts = ["graphframe_bs.py", "graphframe_fast.py", "graphframe_fast_bv.py", "rdd_bs.py", "rdd_fast.py", "rdd_fast_bv.py"]
+# cores = [1,2,8]
+# dataset in ["artists_uniform", "artists_normal", "artists_power_law"]
+# k in [100, 1000, 10000]
 
 for script, cores, dataset, k in [(script, cores,  dataset, k) 
 
-                                                    for script in ["rdd_bs.py","rdd_fast.py"] # "graphframe_bs.py", "rdd_bs.py",
+                                                    for script in ["graphframe_bs.py", "graphframe_fast.py", "rdd_bs.py", "rdd_fast.py"]
                                                     for cores in [1,2,8]
-                                                    for dataset in ["artists_normal"] # "artists_uniform", "artists_normal", "artists_power_law"
-                                                    for k in [10, 100, 1000]
-                                                    
+                                                    for dataset in ["artists_power_law"]
+                                                    for k in [100, 1000, 10000]
                                                     ]: 
     
     script_name = "src/" + script
     print("Current values:")
-    print("Script:", script_name, "| Cores:", cores, "| Dataset:", dataset, "| k:",k)
+    print("Script:", script, "| Cores:", cores, "| Dataset:", dataset, "| k:",k)
     
     
     start = time()
@@ -50,7 +47,7 @@ for script, cores, dataset, k in [(script, cores,  dataset, k)
         # Create a writer object from csv module
         csv_writer = writer(experiments)
         # Add contents of list as last row in the csv file
-        csv_writer.writerow([script_name, cores, dataset, k,  total_time])
+        csv_writer.writerow([script, cores, dataset, k,  total_time])
 
     print("-----------------END OF CURRENT RUN ------------------")
 
@@ -60,4 +57,4 @@ for script, cores, dataset, k in [(script, cores,  dataset, k)
 # $ python run_experiments.py & 
 
 # // Spark-submit examples //
-# spark-submit --master local[1] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 src/rdd_fast.py 1000 0.8
+# spark-submit --master local[8] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 src/graphframe_bs.py 1000
