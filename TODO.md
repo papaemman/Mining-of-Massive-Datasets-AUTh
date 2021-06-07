@@ -18,5 +18,10 @@ Overleaf: <https://www.overleaf.com/project/6092d7d4dc238d5f619dc701>
 
 [X] Presentation (google slides)
 
-------------------------------------
+[Χ] Count total triangles
 
+[Χ] Write experiment results tables
+
+[Χ] Generate plots and add them in report
+
+---

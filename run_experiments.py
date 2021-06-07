@@ -8,6 +8,11 @@
 # --> Result: Count running time
 
 
+# SOS: 
+# Scripts: graphframe_fast.py, graphframe_fast_bv.py, rdd_fast_bv.py, rdd_fast_bv.py require initial threshold
+# this have been set in 0.8.
+
+
 # Load modules
 import os
 from time import time
@@ -16,14 +21,15 @@ from csv import writer
 
 print("Run experiments")
 
-# scripts = ["graphframe_bs.py", "graphframe_fast.py", "graphframe_fast_bv.py", "rdd_bs.py", "rdd_fast.py", "rdd_fast_bv.py"]
+# scripts_without_init_threshold = ["graphframe_bs.py", "graphframe_fast.py", "graphframe_fast_bv.py", "rdd_bs.py", "rdd_fast.py", "rdd_fast_bv.py"]
+# scripts_with_init_threshold = ["graphframe_fast.py", "graphframe_fast_bv.py", "rdd_fast.py", "rdd_fast_bv.py"]
 # cores = [1,2,8]
 # dataset in ["artists_uniform", "artists_normal", "artists_power_law"]
 # k in [100, 1000, 10000]
 
 for script, cores, dataset, k in [(script, cores,  dataset, k) 
 
-                                                    for script in ["graphframe_bs.py", "graphframe_fast.py", "rdd_bs.py", "rdd_fast.py"]
+                                                    for script in ["graphframe_fast.py", "graphframe_fast_bv.py", "rdd_fast.py", "rdd_fast_bv.py"]
                                                     for cores in [1,2,8]
                                                     for dataset in ["artists_power_law"]
                                                     for k in [100, 1000, 10000]
@@ -36,7 +42,11 @@ for script, cores, dataset, k in [(script, cores,  dataset, k)
     
     start = time()
     
-    spark_submit = f"spark-submit --master local[{cores}] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 {script_name} {k}"
+    # Without initial threshold
+    # spark_submit = f"spark-submit --master local[{cores}] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 {script_name} {k} 0.8"
+    
+    # With initial threshold
+    spark_submit = f"spark-submit --master local[{cores}] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 {script_name} {k} 0.8"
     os.system(spark_submit)
 
     end = time()
@@ -57,4 +67,4 @@ for script, cores, dataset, k in [(script, cores,  dataset, k)
 # $ python run_experiments.py & 
 
 # // Spark-submit examples //
-# spark-submit --master local[8] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 src/graphframe_bs.py 1000
+# spark-submit --master local[8] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 src/graphframe_fast.py 1000

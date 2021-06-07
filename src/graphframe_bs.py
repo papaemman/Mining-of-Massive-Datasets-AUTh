@@ -23,7 +23,7 @@ def main(TopK:str):
     # edgesDF = sc.read.option("header",False).option("inferSchema",True).csv("./input/ex_exploit_bug.csv")
 
     
-    edgesDF = sc.read.option("header",False).option("inferSchema",True).csv("./input/artists_power_law.csv")
+    edgesDF = sc.read.option("header",False).option("inferSchema",True).csv("./input/artists_uniform.csv")
     # artists_uniform.csv, artists_normal.csv, artists_power_law.csv
     
     edgesDF = edgesDF.selectExpr("_c0 as src", "_c1 as dst", "_c2 as probability")

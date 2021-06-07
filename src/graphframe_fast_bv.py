@@ -25,9 +25,10 @@ def main(TopK:str,threshold:str):
     #load dataset(edge list) to dataframe 
     edgesDF = sc.read.option("header",False) \
                         .option("inferSchema",True) \
-                        .csv("./artists_normal.csv") \
+                        .csv("./input/artists_power_law.csv") \
                         .selectExpr("_c0 as src", "_c1 as dst", "_c2 as probability")
 
+    # artists_uniform.csv, artists_normal.csv, artists_power_law.csv
 
     # returns the smallest string between 2 integers
     @udf("integer")

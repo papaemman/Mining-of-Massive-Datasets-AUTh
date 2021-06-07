@@ -170,7 +170,11 @@ log4j.rootCategory=INFO, console --> log4j.rootCategory=ERROR, console
 
 ## About Datasets
 
-EDA
+Artists dataset:
+
+    * Nodes: 50,515
+    * Edges: 819,306
+    * Total triangles: 2,273,700
 
 ---
 

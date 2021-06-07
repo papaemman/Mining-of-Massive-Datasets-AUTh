@@ -101,10 +101,12 @@ def main(TopK:str, threshold:str):
 
     sc = SparkContext(appName="Top-k most probable triangles")
     
-    preprocessedEdges_RDD = sc.textFile("./artists_normal.csv") \
+    preprocessedEdges_RDD = sc.textFile("./input/artists_power_law.csv") \
                             .map(lambda x: x.split(",")) \
                             .sortBy(lambda x: x[2], ascending=False) \
                             .map(lambda x: reOrderingSrcAndDstOfEgde(x)) 
+
+    # artists_uniform.csv, artists_normal.csv, artists_power_law.csv
 
     try:
         # The 1st and 2nd edges with the highest probabilty in the graph
