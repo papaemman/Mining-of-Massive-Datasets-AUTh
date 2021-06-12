@@ -1,8 +1,0 @@
-script,cores,dataset,k,time
-graphframe_bs.py,8,artists_uniform,2300000,191.20340251922607
-rdd_bs.py,8,artists_uniform,2300000, 658.4114997386932
-graphframe_bs.py,8,artists_normal,2300000, 150.3886866569519
-rdd_bs.py,8,artists_normal,2300000, 832.7715582847595
-graphframe_bs.py,8,artists_power_law,2300000, 126.02798962593079
-rdd_bs.py,8,artists_power_law,2300000, 671.2432951927185
-
