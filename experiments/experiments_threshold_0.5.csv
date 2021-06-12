@@ -1,0 +1,13 @@
+script,cores,dataset,k,time
+graphframe_fast.py,8,artists_normal,100,91.37576127052307
+graphframe_fast.py,8,artists_normal,1000,96.04672312736511
+graphframe_fast.py,8,artists_normal,10000,100.08475041389465
+graphframe_fast_bv.py,8,artists_normal,100,124.93631052970886
+graphframe_fast_bv.py,8,artists_normal,1000,141.3152048587799
+graphframe_fast_bv.py,8,artists_normal,10000,166.2217276096344
+rdd_fast.py,8,artists_normal,100,612.6360807418823
+rdd_fast.py,8,artists_normal,1000,601.980574131012
+rdd_fast.py,8,artists_normal,10000,631.1079804897308
+rdd_fast_bv.py,8,artists_normal,100,509.0340631008148
+rdd_fast_bv.py,8,artists_normal,1000,593.5640158653259
+rdd_fast_bv.py,8,artists_normal,10000,618.9584267139435

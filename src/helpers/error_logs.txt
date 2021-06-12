@@ -1,0 +1,160 @@
+Current values:
+Script: graphframe_fast_bv.py | Cores: 8 | Dataset: artists_uniform | k: 2300000
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by org.apache.spark.unsafe.Platform (file:/home/user7/spark-3.1.1-bin-hadoop2.7/jars/spark-unsafe_2.12-3.1.1.jar) to constructor java.nio.DirectByteBuffer(long,int)
+WARNING: Please consider reporting this to the maintainers of org.apache.spark.unsafe.Platform
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+:: loading settings :: url = jar:file:/home/user7/spark-3.1.1-bin-hadoop2.7/jars/ivy-2.4.0.jar!/org/apache/ivy/core/settings/ivysettings.xml
+Ivy Default Cache set to: /home/user7/.ivy2/cache
+The jars for the packages stored in: /home/user7/.ivy2/jars
+graphframes#graphframes added as a dependency
+:: resolving dependencies :: org.apache.spark#spark-submit-parent-fa488110-de2c-49fe-95ee-6709d80c26cd;1.0
+        confs: [default]
+        found graphframes#graphframes;0.8.1-spark3.0-s_2.12 in local-ivy-cache
+:: resolution report :: resolve 155ms :: artifacts dl 2ms
+        :: modules in use:
+        graphframes#graphframes;0.8.1-spark3.0-s_2.12 from local-ivy-cache in [default]
+        ---------------------------------------------------------------------
+        |                  |            modules            ||   artifacts   |
+        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+        ---------------------------------------------------------------------
+        |      default     |   1   |   0   |   0   |   0   ||   1   |   0   |
+        ---------------------------------------------------------------------
+:: retrieving :: org.apache.spark#spark-submit-parent-fa488110-de2c-49fe-95ee-6709d80c26cd
+        confs: [default]
+        0 artifacts copied, 1 already retrieved (0kB/6ms)
+21/06/12 21:41:17 ERROR Executor: Exception in task 2.0 in stage 35.0 (TID 5971)
+java.lang.OutOfMemoryError: Java heap space
+21/06/12 21:42:17 ERROR Utils: Uncaught exception in thread stdout writer for /usr/bin/python3.8
+java.lang.OutOfMemoryError: Java heap space
+Exception in thread "stdout writer for /usr/bin/python3.8" java.lang.OutOfMemoryError: Java heap space
+21/06/12 21:42:20 ERROR Utils: Uncaught exception in thread stdout writer for /usr/bin/python3.8
+java.lang.OutOfMemoryError: Java heap space
+Exception in thread "stdout writer for /usr/bin/python3.8" java.lang.OutOfMemoryError: Java heap space
+21/06/12 21:42:35 ERROR Executor: Exception in task 1.0 in stage 35.0 (TID 5970)
+java.lang.OutOfMemoryError: Java heap space
+21/06/12 21:42:35 ERROR SparkUncaughtExceptionHandler: Uncaught exception in thread Thread[Executor task launch worker for task 2.0 in stage 35.0 (TID 5971),5,main]
+java.lang.OutOfMemoryError: Java heap space
+21/06/12 21:42:35 ERROR SparkUncaughtExceptionHandler: [Container in shutdown] Uncaught exception in thread Thread[Executor task launch worker for task 1.0 in stage 35.0 (TID 5970),5,main]
+java.lang.OutOfMemoryError: Java heap space
+21/06/12 21:42:35 ERROR TaskSetManager: Task 2 in stage 35.0 failed 1 times; aborting job
+21/06/12 21:42:36 ERROR Inbox: Ignoring error
+java.util.concurrent.RejectedExecutionException: Task org.apache.spark.executor.Executor$TaskRunner@39d4caa8 rejected from java.util.concurrent.ThreadPoolExecutor@36db8c6e[Shutting down, pool size = 8, active threads = 8, queued tasks = 0, completed tasks = 5970]
+        at java.base/java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:2055)
+        at java.base/java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:825)
+        at java.base/java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:1355)
+        at org.apache.spark.executor.Executor.launchTask(Executor.scala:270)
+        at org.apache.spark.scheduler.local.LocalEndpoint.$anonfun$reviveOffers$1(LocalSchedulerBackend.scala:93)
+        at org.apache.spark.scheduler.local.LocalEndpoint.$anonfun$reviveOffers$1$adapted(LocalSchedulerBackend.scala:91)
+        at scala.collection.Iterator.foreach(Iterator.scala:941)
+        at scala.collection.Iterator.foreach$(Iterator.scala:941)
+        at scala.collection.AbstractIterator.foreach(Iterator.scala:1429)
+        at scala.collection.IterableLike.foreach(IterableLike.scala:74)
+        at scala.collection.IterableLike.foreach$(IterableLike.scala:73)
+        at scala.collection.AbstractIterable.foreach(Iterable.scala:56)
+        at org.apache.spark.scheduler.local.LocalEndpoint.reviveOffers(LocalSchedulerBackend.scala:91)
+        at org.apache.spark.scheduler.local.LocalEndpoint$$anonfun$receive$1.applyOrElse(LocalSchedulerBackend.scala:74)
+        at org.apache.spark.rpc.netty.Inbox.$anonfun$process$1(Inbox.scala:115)
+        at org.apache.spark.rpc.netty.Inbox.safelyCall(Inbox.scala:213)
+        at org.apache.spark.rpc.netty.Inbox.process(Inbox.scala:100)
+        at org.apache.spark.rpc.netty.MessageLoop.org$apache$spark$rpc$netty$MessageLoop$$receiveLoop(MessageLoop.scala:75)
+        at org.apache.spark.rpc.netty.MessageLoop$$anon$1.run(MessageLoop.scala:41)
+        at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+        at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+        at java.base/java.lang.Thread.run(Thread.java:834)
+Traceback (most recent call last):
+  File "/home/user7/Projects/MSc/Mining-of-Massive-Datasets-AUTh/src/graphframe_fast_bv.py", line 214, in <module>
+    main(sys.argv[1],sys.argv[2])
+  File "/home/user7/Projects/MSc/Mining-of-Massive-Datasets-AUTh/src/graphframe_fast_bv.py", line 121, in main
+    TopKTrianglesInHeavySet = trianglesInHeavySet \
+  File "/home/user7/spark-3.1.1-bin-hadoop2.7/python/lib/pyspark.zip/pyspark/sql/dataframe.py", line 1589, in head
+  File "/home/user7/spark-3.1.1-bin-hadoop2.7/python/lib/pyspark.zip/pyspark/sql/dataframe.py", line 728, in take
+  File "/home/user7/spark-3.1.1-bin-hadoop2.7/python/lib/pyspark.zip/pyspark/sql/dataframe.py", line 677, in collect
+  File "/home/user7/spark-3.1.1-bin-hadoop2.7/python/lib/py4j-0.10.9-src.zip/py4j/java_gateway.py", line 1304, in __call__
+  File "/home/user7/spark-3.1.1-bin-hadoop2.7/python/lib/pyspark.zip/pyspark/sql/utils.py", line 111, in deco
+  File "/home/user7/spark-3.1.1-bin-hadoop2.7/python/lib/py4j-0.10.9-src.zip/py4j/protocol.py", line 326, in get_return_value
+py4j.protocol.Py4JJavaError21/06/12 21:42:36 ERROR TaskSchedulerImpl: Exception in statusUpdate
+java.util.concurrent.RejectedExecutionException: Task org.apache.spark.scheduler.TaskResultGetter$$Lambda$3963/0x0000000841373840@66cffa29 rejected from java.util.concurrent.ThreadPoolExecutor@139f426[Terminated, pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 5974]
+        at java.base/java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:2055)
+        at java.base/java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:825)
+        at java.base/java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:1355)
+        at org.apache.spark.scheduler.TaskResultGetter.enqueueFailedTask(TaskResultGetter.scala:137)
+        at org.apache.spark.scheduler.TaskSchedulerImpl.liftedTree2$1(TaskSchedulerImpl.scala:771)
+        at org.apache.spark.scheduler.TaskSchedulerImpl.statusUpdate(TaskSchedulerImpl.scala:745)
+        at org.apache.spark.scheduler.local.LocalEndpoint$$anonfun$receive$1.applyOrElse(LocalSchedulerBackend.scala:71)
+        at org.apache.spark.rpc.netty.Inbox.$anonfun$process$1(Inbox.scala:115)
+        at org.apache.spark.rpc.netty.Inbox.safelyCall(Inbox.scala:213)
+        at org.apache.spark.rpc.netty.Inbox.process(Inbox.scala:100)
+        at org.apache.spark.rpc.netty.MessageLoop.org$apache$spark$rpc$netty$MessageLoop$$receiveLoop(MessageLoop.scala:75)
+        at org.apache.spark.rpc.netty.MessageLoop$$anon$1.run(MessageLoop.scala:41)
+        at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+        at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+        at java.base/java.lang.Thread.run(Thread.java:834)
+: An error occurred while calling o770799.collectToPython.
+: org.apache.spark.SparkException: Job aborted due to stage failure: Task 2 in stage 35.0 failed 1 times, most recent failure: Lost task 2.0 in stage 35.0 (TID 5971) (papaemman-lenovo-v330-15ikb executor driver): java.lang.OutOfMemoryError: Java heap space
+
+Driver stacktrace:
+        at org.apache.spark.scheduler.DAGScheduler.failJobAndIndependentStages(DAGScheduler.scala:2253)
+        at org.apache.spark.scheduler.DAGScheduler.$anonfun$abortStage$2(DAGScheduler.scala:2202)
+        at org.apache.spark.scheduler.DAGScheduler.$anonfun$abortStage$2$adapted(DAGScheduler.scala:2201)
+        at scala.collection.mutable.ResizableArray.foreach(ResizableArray.scala:62)
+        at scala.collection.mutable.ResizableArray.foreach$(ResizableArray.scala:55)
+        at scala.collection.mutable.ArrayBuffer.foreach(ArrayBuffer.scala:49)
+        at org.apache.spark.scheduler.DAGScheduler.abortStage(DAGScheduler.scala:2201)
+        at org.apache.spark.scheduler.DAGScheduler.$anonfun$handleTaskSetFailed$1(DAGScheduler.scala:1078)
+        at org.apache.spark.scheduler.DAGScheduler.$anonfun$handleTaskSetFailed$1$adapted(DAGScheduler.scala:1078)
+        at scala.Option.foreach(Option.scala:407)
+        at org.apache.spark.scheduler.DAGScheduler.handleTaskSetFailed(DAGScheduler.scala:1078)
+        at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.doOnReceive(DAGScheduler.scala:2440)
+        at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:2382)
+        at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:2371)
+        at org.apache.spark.util.EventLoop$$anon$1.run(EventLoop.scala:49)
+        at org.apache.spark.scheduler.DAGScheduler.runJob(DAGScheduler.scala:868)
+        at org.apache.spark.SparkContext.runJob(SparkContext.scala:2202)
+        at org.apache.spark.SparkContext.runJob(SparkContext.scala:2297)
+        at org.apache.spark.rdd.RDD.$anonfun$reduce$1(RDD.scala:1120)
+        at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:151)
+        at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:112)
+        at org.apache.spark.rdd.RDD.withScope(RDD.scala:414)
+        at org.apache.spark.rdd.RDD.reduce(RDD.scala:1102)
+        at org.apache.spark.rdd.RDD.$anonfun$takeOrdered$1(RDD.scala:1524)
+        at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:151)
+        at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:112)
+        at org.apache.spark.rdd.RDD.withScope(RDD.scala:414)
+        at org.apache.spark.rdd.RDD.takeOrdered(RDD.scala:1512)
+        at org.apache.spark.sql.execution.TakeOrderedAndProjectExec.executeCollect(limit.scala:183)
+        at org.apache.spark.sql.Dataset.$anonfun$collectToPython$1(Dataset.scala:3519)
+        at org.apache.spark.sql.Dataset.$anonfun$withAction$1(Dataset.scala:3687)
+        at org.apache.spark.sql.execution.SQLExecution$.$anonfun$withNewExecutionId$5(SQLExecution.scala:103)
+        at org.apache.spark.sql.execution.SQLExecution$.withSQLConfPropagated(SQLExecution.scala:163)
+        at org.apache.spark.sql.execution.SQLExecution$.$anonfun$withNewExecutionId$1(SQLExecution.scala:90)
+        at org.apache.spark.sql.SparkSession.withActive(SparkSession.scala:772)
+        at org.apache.spark.sql.execution.SQLExecution$.withNewExecutionId(SQLExecution.scala:64)
+        at org.apache.spark.sql.Dataset.withAction(Dataset.scala:3685)
+        at org.apache.spark.sql.Dataset.collectToPython(Dataset.scala:3516)
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+        at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+        at py4j.reflection.MethodInvoker.invoke(MethodInvoker.java:244)
+        at py4j.reflection.ReflectionEngine.invoke(ReflectionEngine.java:357)
+        at py4j.Gateway.invoke(Gateway.java:282)
+        at py4j.commands.AbstractCommand.invokeMethod(AbstractCommand.java:132)
+        at py4j.commands.CallCommand.execute(CallCommand.java:79)
+        at py4j.GatewayConnection.run(GatewayConnection.java:238)
+        at java.base/java.lang.Thread.run(Thread.java:834)
+Caused by: java.lang.OutOfMemoryError: Java heap space
+
+21/06/12 21:42:37 ERROR Utils: Uncaught exception in thread Executor task launch worker for task 8.0 in stage 35.0 (TID 5977)
+java.lang.NullPointerException
+        at org.apache.spark.scheduler.Task.$anonfun$run$2(Task.scala:152)
+        at org.apache.spark.util.Utils$.tryLogNonFatalError(Utils.scala:1419)
+        at org.apache.spark.scheduler.Task.run(Task.scala:150)
+        at org.apache.spark.executor.Executor$TaskRunner.$anonfun$run$3(Executor.scala:497)
+        at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1439)
+        at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:500)
+        at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+        at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+        at java.base/java.lang.Thread.run(Thread.java:834)
+Total time: 1216.4497654438019

@@ -1,6 +1,6 @@
-# Mining-of-Massive-Datasets-AUTh
+# Course: Mining-of-Massive-Datasets-AUTh
 
-## MSc Data and Web Science 2020-2021 - Mining of Massive Datasets”
+## MSc Data and Web Science 2020-2021
 
 ![MSC-LOGO](./assets/dws-logo.png)
 
@@ -126,11 +126,7 @@ docker rm ApacheSpark
 
 ```bash
 spark-submit --master local[3] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 src/graphframe_bs.py 2 cache
-spark-submit --master local[3] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 src/graphframe_ex1.py 6
-spark-submit --master local[3] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 src/graphframe_ex2.py 6
-
 spark-submit --master local[3] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 src/rdd_bs.py 2
-spark-submit --master local[3] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 src/rdd_fast.py 2
 ```
 
 ---
@@ -168,14 +164,12 @@ log4j.rootCategory=INFO, console --> log4j.rootCategory=ERROR, console
 
 ---
 
-## About Datasets
+## Dataset information
 
-Artists dataset:
+SNAP Artists dataset: <https://snap.stanford.edu/data/gemsec-Facebook.html>
 
-    * Nodes: 50,515
-    * Edges: 819,306
-    * Total triangles: 2,273,700
+ We evaluate our implementations through a Real World dataset provided from the Stanford Network Analysis Project repository (SNAP\footnote{\href{https://snap.stanford.edu/index.html}{Snap website}}), which is the artists dataset\footnote{\href{https://snap.stanford.edu/data/gemsec-Facebook.html}{Artist dataset link}}. This dataset referred to Facebook pages and it was collected in November 2017. It represents blue verified Facebook page networks. The network's nodes represent the artists' pages and the network's edges represent the mutual likes among them.
 
----
-
-## Results
+* Nodes: 50,515
+* Edges: 819,306
+* Total triangles: 2,273,700

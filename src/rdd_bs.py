@@ -76,7 +76,7 @@ def main(TopK:str):
 
     # edgesRDD = sc.textFile("./input/ex_exploit_bug.csv")
 
-    edgesRDD = sc.textFile("./input/artists_power_law.csv")
+    edgesRDD = sc.textFile("./input/artists_uniform.csv")
 
     # artists_uniform.csv, artists_normal.csv, artists_power_law.csv
 
@@ -95,8 +95,8 @@ def main(TopK:str):
     # .count()
     # print(trianglesRDD)
 
-    for triangle in trianglesRDD:
-        print(triangle)
+    # for triangle in trianglesRDD:
+    #     print(triangle)
     
     sc.stop()
 

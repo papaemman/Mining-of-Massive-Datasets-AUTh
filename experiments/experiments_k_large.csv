@@ -1,0 +1,19 @@
+script,cores,dataset,k,time
+graphframe_fast.py,8,artists_normal,2300000,495.97255992889404
+graphframe_fast_bv.py,8,artists_normal,2300000,603.9519772529602
+rdd_fast.py,8,artists_normal,2300000,2809.1914756298065
+rdd_fast_bv.py,8,artists_normal,2300000,2392.7310712337494
+graphframe_fast.py,8,artists_uniform,2300000,388.31083965301514
+graphframe_fast_bv.py,8,artists_uniform,2300000,1151.0345129966736
+rdd_fast.py,8,artists_uniform,2300000,1752.3293883800507
+rdd_fast_bv.py,8,artists_uniform,2300000,1583.311131477356
+graphframe_fast.py,8,artists_power_law,2300000,356.51343846321106
+graphframe_fast_bv.py,8,artists_power_law,2300000,1092.2516040802002
+rdd_fast.py,8,artists_power_law,2300000,1235.5052349567413
+rdd_fast_bv.py,8,artists_power_law,2300000,1198.138226032257
+graphframe_bs.py,8,artists_uniform,2300000,191.20340251922607
+rdd_bs.py,8,artists_uniform,2300000, 658.4114997386932
+graphframe_bs.py,8,artists_normal,2300000, 150.3886866569519
+rdd_bs.py,8,artists_normal,2300000, 832.7715582847595
+graphframe_bs.py,8,artists_power_law,2300000, 126.02798962593079
+rdd_bs.py,8,artists_power_law,2300000, 671.2432951927185

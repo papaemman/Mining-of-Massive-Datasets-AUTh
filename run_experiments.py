@@ -29,10 +29,10 @@ print("Run experiments")
 
 for script, cores, dataset, k in [(script, cores,  dataset, k) 
 
-                                                    for script in ["graphframe_fast.py", "graphframe_fast_bv.py", "rdd_fast.py", "rdd_fast_bv.py"]
-                                                    for cores in [1,2,8]
-                                                    for dataset in ["artists_power_law"]
-                                                    for k in [100, 1000, 10000]
+                                                    for script in ["graphframe_bs.py", "rdd_bs.py"]
+                                                    for cores in [8]
+                                                    for dataset in ["artists_uniform"] # SOS: Change files input based on this.
+                                                    for k in [2_300_000]
                                                     ]: 
     
     script_name = "src/" + script
@@ -43,17 +43,23 @@ for script, cores, dataset, k in [(script, cores,  dataset, k)
     start = time()
     
     # Without initial threshold
+    spark_submit = f"spark-submit --master local[{cores}] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 {script_name} {k}"
+    
+    # With initial threshold 0.8
     # spark_submit = f"spark-submit --master local[{cores}] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 {script_name} {k} 0.8"
     
-    # With initial threshold
-    spark_submit = f"spark-submit --master local[{cores}] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 {script_name} {k} 0.8"
+    # With initial threshold 0.5
+    # spark_submit = f"spark-submit --master local[{cores}] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 {script_name} {k} 0.5"
+    
+    
+    
     os.system(spark_submit)
 
     end = time()
     total_time = end-start
     print("Total time:", total_time)
 
-    with open('experiments.csv', 'a+', newline='') as experiments:
+    with open('experiments_k_large.csv', 'a+', newline='') as experiments:  # experiments, experiments_threshold_0.5, experiments_k_large
         # Create a writer object from csv module
         csv_writer = writer(experiments)
         # Add contents of list as last row in the csv file
@@ -66,5 +72,9 @@ for script, cores, dataset, k in [(script, cores,  dataset, k)
 ## // RUN Experiments //
 # $ python run_experiments.py & 
 
+
 # // Spark-submit examples //
-# spark-submit --master local[8] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 src/graphframe_fast.py 1000
+
+# spark-submit --master local[8] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 src/graphframe_fast.py 2300000 0.5
+
+# spark-submit --master local[8] --packages graphframes:graphframes:0.8.1-spark3.0-s_2.12 src/graphframe_fast_bv.py 2300000 0.5
