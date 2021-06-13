@@ -14,7 +14,7 @@ import time
 
 def main(TopK:str):
 
-    sc = SparkSession.builder.appName("Top-k most probable triangles").getOrCreate()  
+    sc = SparkSession.builder.appName("Top-k most probable triangles").getOrCreate()
        
     ## Load dataset(edge list) to dataframe 
     
@@ -68,7 +68,9 @@ def main(TopK:str):
 
     # Finds all the triangles, "subgraph" = Dataframe
     subgraph = g.find("(a)-[e]->(b); (b)-[e2]->(c); (a)-[e3]->(c)")
-    print(subgraph.count())
+    
+    # subgraph.show()
+    # print(subgraph.count())
     
     # Concatenate 3 strings
     @udf("string")
