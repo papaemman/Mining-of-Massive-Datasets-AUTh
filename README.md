@@ -21,7 +21,7 @@ existential probability of the triangle is `p(a)*p(b)*p(c)`
 
 [Assignment](./docs/mmd-project1-2021.pdf)
 
-[Report](./docs/report_pdf.pdf)
+[Report](./docs/Report_MiningOfMassiveDataset.pdf)
 
 ---
 
